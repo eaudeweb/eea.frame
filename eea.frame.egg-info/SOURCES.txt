@@ -1,0 +1,11 @@
+MANIFEST.in
+README.rst
+eea.frame.egg-info/PKG-INFO
+eea.frame.egg-info/SOURCES.txt
+eea.frame.egg-info/dependency_links.txt
+eea.frame.egg-info/not-zip-safe
+eea.frame.egg-info/requires.txt
+eea.frame.egg-info/top_level.txt
+frame/__init__.py
+frame/middleware.py
+frame/models.py
