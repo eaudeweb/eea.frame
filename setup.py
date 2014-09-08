@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='eea.frame',
-    version='0.2',
+    version='0.2.1',
     description='EEA Frame',
     packages=['frame'],
     include_package_data=True,

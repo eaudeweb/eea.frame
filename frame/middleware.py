@@ -69,6 +69,7 @@ class Loader(BaseLoader):
                 "{% block zope_content %}{% endblock %}"),
             ("<!-- block_head -->",
                 "{% block head %}{% endblock %}"),
+            ("src=\"misc_/", "src=\"/misc_/"),
         ]
 
         html = html.strip()
