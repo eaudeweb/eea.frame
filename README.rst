@@ -34,4 +34,4 @@ In your project's ``settings.py`` add::
     'django.template.loaders.app_directories.Loader',
   )
   
-Also, usually in ``local_settings.py`` you need to define: ``FRAME_URL`` to an url pointing to a Zope frame instance.
+Also, usually in ``local_settings.py`` you need to define: ``FRAME_URL`` to an url pointing to a Zope frame instance, and ``FRAME_COOKIES = ['__ac', '_ZopeId']``.
