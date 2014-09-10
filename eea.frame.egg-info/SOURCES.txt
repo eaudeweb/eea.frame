@@ -9,6 +9,7 @@ eea.frame.egg-info/not-zip-safe
 eea.frame.egg-info/requires.txt
 eea.frame.egg-info/top_level.txt
 frame/__init__.py
+frame/backends.py
 frame/middleware.py
 frame/models.py
 frame/templates/frame.html

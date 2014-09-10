@@ -40,6 +40,11 @@ class UserMiddleware(object):
                 request.user_id = resp_json['user_id']
                 request.user_roles = resp_json['user_roles']
                 request.user_groups = resp_json['groups']
+                request.META['REMOTE_USER'] = {
+                    'user_id': request.user_id,
+                    'user_roles': request.user_roles,
+                    'user_groups': request.user_groups,
+                } if request.user_id else {}
         else:
             request.user_id = getattr(settings, 'USER_ID', None)
             request.user_roles = getattr(settings, 'USER_ROLES', None)
