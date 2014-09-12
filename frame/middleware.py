@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.template.base import TemplateDoesNotExist
 from django.template.loader import BaseLoader
@@ -6,7 +8,13 @@ import requests
 from threading import local
 
 
+DIV_PATTERN = '<div id="language">.*?</div>'
+A_PATTERN = '(<a.*?</a>).*(<a.*?</a>)'
+LANG_PATTERN = 'title="(.*)?"'
+
 _thread_locals = local()
+
+
 def get_current_request():
     return getattr(_thread_locals, 'request', None)
 
@@ -17,6 +25,19 @@ def get_forwarded_cookies(request):
         if name in request.COOKIES:
             forwarded_cookies[name] = request.COOKIES[name]
     return forwarded_cookies
+
+
+def get_current_language(frame_html):
+    div_elem = re.search(DIV_PATTERN, frame_html, re.DOTALL).group()
+    if not div_elem:
+        return None
+    a_elems = re.search(A_PATTERN, div_elem, re.DOTALL).groups()
+    for a_elem in a_elems:
+        if 'current' in a_elem:
+            language = re.search(LANG_PATTERN, a_elem).groups()
+            if language:
+                return language[0]
+    return None
 
 
 class RequestMiddleware(object):
@@ -40,6 +61,7 @@ class UserMiddleware(object):
                 request.user_id = resp_json['user_id']
                 request.user_roles = resp_json['user_roles']
                 request.user_groups = resp_json['groups']
+                request.language = get_current_language(resp_json['frame_html'])
                 if request.user_id:
                     request.META['REMOTE_USER'] = {
                         'user_id': request.user_id,
@@ -50,6 +72,7 @@ class UserMiddleware(object):
             request.user_id = getattr(settings, 'USER_ID', None)
             request.user_roles = getattr(settings, 'USER_ROLES', None)
             request.user_groups = getattr(settings, 'USER_GROUPS', None)
+            request.language = getattr(settings, 'DEFAULT_LANGUAGE', None)
 
         if not getattr(request, 'user_id', None):
             request.user_id = None
@@ -87,7 +110,7 @@ class Loader(BaseLoader):
         request = get_current_request()
 
         if (request and getattr(settings, 'FRAME_URL', None)
-            and template_name == 'frame.html' ):
+                and template_name == 'frame.html'):
 
             forwarded_cookies = get_forwarded_cookies(request)
 
