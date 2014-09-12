@@ -61,7 +61,10 @@ class UserMiddleware(object):
                 request.user_id = resp_json['user_id']
                 request.user_roles = resp_json['user_roles']
                 request.user_groups = resp_json['groups']
-                request.language = get_current_language(resp_json['frame_html'])
+                request.language = (
+                    get_current_language(resp_json['frame_html']) or
+                    getattr(settings, 'DEFAULT_LANGUAGE', None)
+                )
                 if request.user_id:
                     request.META['REMOTE_USER'] = {
                         'user_id': request.user_id,
