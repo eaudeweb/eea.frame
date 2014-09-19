@@ -10,7 +10,7 @@ from threading import local
 
 DIV_PATTERN = '<div id="language">.*?</div>'
 A_PATTERN = '(<a.*?</a>).*(<a.*?</a>)'
-LANG_PATTERN = 'title="(.*)?"'
+LANG_PATTERN = '<a.*?>([a-z]{2})</a>'
 
 _thread_locals = local()
 
@@ -34,7 +34,7 @@ def get_current_language(frame_html):
     a_elems = re.search(A_PATTERN, div_elem, re.DOTALL).groups()
     for a_elem in a_elems:
         if 'current' in a_elem:
-            language = re.search(LANG_PATTERN, a_elem).groups()
+            language = re.search(LANG_PATTERN, a_elem, re.DOTALL).groups()
             if language:
                 return language[0]
     return None
