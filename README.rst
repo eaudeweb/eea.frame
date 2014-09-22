@@ -65,3 +65,17 @@ For each user that is authenticated on _eea.frame_, a
 For each of the roles the user has in _eea.frame_, a
 ``django.contrib.auth.models.Group`` instance is created, and you can assign
 permissions to that group.
+
+Seen Middleware
+---------------
+Use the seen middleware to keep for each user the datetime of the last visit
+to the application.
+
+Set (at the end of the middleware classes setting)::
+
+  MIDDLEWARE_CLASSES = (
+    ...
+    'frame.middleware.SeenMiddleware',
+  )
+
+You can also exclude views using ``FRAME_SEEN_EXCLUDE`` config setting.

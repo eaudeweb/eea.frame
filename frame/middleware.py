@@ -1,6 +1,4 @@
 from threading import local
-
-from frame.loaders import Loader
 import requests
 
 from frame.utils import get_current_language, get_forwarded_cookies
@@ -57,6 +55,20 @@ class UserMiddleware(object):
             request.user_roles = []
         if not getattr(request, 'user_groups', None):
             request.user_groups = []
+
+
+class SeenMiddleware(object):
+    def process_request(self, request):
+        from frame.models import Seen
+        seen_exclude = getattr(settings, 'FRAME_SEEN_EXCLUDE', [])
+        if request.path_info in seen_exclude:
+            return
+
+        if not request.user.is_authenticated():
+            return
+
+        seen, new = Seen.objects.get_or_create(user=request.user)
+        seen.save()
 
 
 # keep this for compatibility

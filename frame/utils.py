@@ -7,9 +7,10 @@ LANG_PATTERN = '<a.*?>([a-z]{2})</a>'
 
 
 def get_current_language(frame_html):
-    div_elem = re.search(DIV_PATTERN, frame_html, re.DOTALL).group()
+    div_elem = re.search(DIV_PATTERN, frame_html, re.DOTALL)
     if not div_elem:
         return None
+    div_elem = div_elem.group()
     a_elems = re.search(A_PATTERN, div_elem, re.DOTALL).groups()
     for a_elem in a_elems:
         if 'current' in a_elem:

@@ -10,6 +10,8 @@ eea.frame.egg-info/requires.txt
 eea.frame.egg-info/top_level.txt
 frame/__init__.py
 frame/backends.py
+frame/loaders.py
 frame/middleware.py
 frame/models.py
+frame/utils.py
 frame/templates/frame.html
