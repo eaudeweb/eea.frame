@@ -78,4 +78,9 @@ Set (at the end of the middleware classes setting)::
     'frame.middleware.SeenMiddleware',
   )
 
-You can also exclude views using ``FRAME_SEEN_EXCLUDE`` config setting.
+If you want to use the default view, add
+``frame.utils.get_objects_from_last_seen_count`` to your url patterns, in a
+location such as ``^/_lastseen/$``, then set the ``FRAME_SEEN_MODELS`` to a
+list of pairs (model, field) for the objects to be counted.
+
+You should exclude this view using ``FRAME_SEEN_EXCLUDE`` config setting.

@@ -1,4 +1,8 @@
+import json
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
+from django.utils.module_loading import import_by_path
 import re
 
 DIV_PATTERN = '<div id="language">.*?</div>'
@@ -26,3 +30,34 @@ def get_forwarded_cookies(request):
         if name in request.COOKIES:
             forwarded_cookies[name] = request.COOKIES[name]
     return forwarded_cookies
+
+
+def get_objects_from_last_seen_count(request):
+    """ View returning a json with the count of objects from last seen.
+    """
+    if not request.user.is_authenticated():
+        raise PermissionDenied()
+
+    models = getattr(settings, 'FRAME_SEEN_MODELS', None)
+    if not models:
+        raise ValueError('No models were set')
+
+    from frame.models import Seen
+
+    try:
+        seen = request.user.seen
+        seen = seen.seen
+    except Seen.DoesNotExist:
+        seen = None
+
+    count = 0
+    for model_name, field in models:
+        model = import_by_path(model_name)
+        count += model.objects.filter(**{'%s__gte' % field: seen}).count()
+
+    data = {
+        'count': count, 'seen': seen.strftime('%Y-%m-%d %H:%M:%s'),
+        'user': request.user.username,
+    }
+    return HttpResponse(json.dumps(data),
+                        content_type='application/json')
