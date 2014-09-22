@@ -53,10 +53,14 @@ def get_objects_from_last_seen_count(request):
     count = 0
     for model_name, field in models:
         model = import_by_path(model_name)
-        count += model.objects.filter(**{'%s__gte' % field: seen}).count()
+        if seen:
+            count += model.objects.filter(**{'%s__gte' % field: seen}).count()
+        else:
+            count += model.objects.count()
 
     data = {
-        'count': count, 'seen': seen.strftime('%Y-%m-%d %H:%M:%s'),
+        'count': count,
+        'seen': seen and seen.strftime('%Y-%m-%d %H:%M:%s'),
         'user': request.user.username,
     }
     return HttpResponse(json.dumps(data),
