@@ -1,16 +1,11 @@
-import re
+from threading import local
+import requests
 
+from frame.utils import get_current_language, get_forwarded_cookies
 from django.conf import settings
 from django.template.base import TemplateDoesNotExist
 from django.template.loader import BaseLoader
 
-import requests
-from threading import local
-
-
-DIV_PATTERN = '<div id="language">.*?</div>'
-A_PATTERN = '(<a.*?</a>).*(<a.*?</a>)'
-LANG_PATTERN = '<a.*?>([a-z]{2})</a>'
 
 _thread_locals = local()
 
@@ -19,38 +14,17 @@ def get_current_request():
     return getattr(_thread_locals, 'request', None)
 
 
-def get_forwarded_cookies(request):
-    forwarded_cookies = {}
-    for name in getattr(settings, 'FRAME_COOKIES', []):
-        if name in request.COOKIES:
-            forwarded_cookies[name] = request.COOKIES[name]
-    return forwarded_cookies
-
-
-def get_current_language(frame_html):
-    div_elem = re.search(DIV_PATTERN, frame_html, re.DOTALL).group()
-    if not div_elem:
-        return None
-    a_elems = re.search(A_PATTERN, div_elem, re.DOTALL).groups()
-    for a_elem in a_elems:
-        if 'current' in a_elem:
-            language = re.search(LANG_PATTERN, a_elem, re.DOTALL).groups()
-            if language:
-                return language[0]
-    return None
-
-
 class RequestMiddleware(object):
     """
     Middleware that gets various objects from the
     request object and saves them in thread local storage.
     """
+
     def process_request(self, request):
         _thread_locals.request = request
 
 
 class UserMiddleware(object):
-
     def process_request(self, request):
         request = get_current_request()
         if getattr(settings, 'FRAME_URL', None):
@@ -95,14 +69,17 @@ class Loader(BaseLoader):
             ("{{", "{% templatetag openvariable %}"),
             ("}}", "{% templatetag closevariable %}"),
             ("<!-- block_messages -->",
-                "{% block action_buttons %}{% endblock %}"
-                "{% block messages %}{% endblock %}"),
+             "{% block action_buttons %}{% endblock %}"
+             "{% block messages %}{% endblock %}"),
             ("<!-- block_content -->",
-                "{% block zope_content %}{% endblock %}"),
+             "{% block zope_content %}{% endblock %}"),
             ("<!-- block_head -->",
-                "{% block head %}{% endblock %}"),
+             "{% block head %}{% endblock %}"),
             ("src=\"misc_/", "src=\"/misc_/"),
         ]
+
+        if getattr(settings, 'FRAME_EXTRA_SUBSTITUTIONS', None):
+            substitutions += settings.FRAME_EXTRA_SUBSTITUTIONS
 
         html = html.strip()
         for sub_a, sub_b in substitutions:
@@ -113,7 +90,7 @@ class Loader(BaseLoader):
         request = get_current_request()
 
         if (request and getattr(settings, 'FRAME_URL', None)
-                and template_name == 'frame.html'):
+            and template_name == 'frame.html'):
 
             forwarded_cookies = get_forwarded_cookies(request)
 
@@ -126,5 +103,6 @@ class Loader(BaseLoader):
         raise TemplateDoesNotExist
 
     load_template_source.is_usable = True
+
 
 _loader = Loader()

@@ -40,6 +40,9 @@ url pointing to a Zope frame instance, and
 
 Your ``layout.html`` must extend ``"frame.html"`` in order to use the frame.
 
+You can set ``FRAME_EXTRA_SUBSTITUTIONS`` to a list of pairs to be replaced
+in the frame html.
+
 Authentication Backend
 ----------------------
 If you want to use the Django groups and permissions settings with users from
