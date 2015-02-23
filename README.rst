@@ -36,7 +36,9 @@ In your project's ``settings.py`` add::
   
 Also, usually in ``local_settings.py`` you need to define: ``FRAME_URL`` to an
 url pointing to a Zope frame instance, and
-``FRAME_COOKIES = ['__ac', '_ZopeId']``.
+``FRAME_COOKIES = ['__ac', '_ZopeId', '__ginger_snap']``.
+
+You can skip https with ``FRAME_VERIFY_SSL = False``.
 
 Your ``layout.html`` must extend ``"frame.html"`` in order to use the frame.
 
@@ -59,10 +61,10 @@ _eea.frame_, you need to set::
     'frame.backends.FrameUserBackend',
   )
 
-For each user that is authenticated on _eea.frame_, a
+For each user that is authenticated on *eea.frame*, a
 ``django.contrib.auth.models.User`` instance is created.
 
-For each of the roles the user has in _eea.frame_, a
+For each of the roles the user has in *eea.frame*, a
 ``django.contrib.auth.models.Group`` instance is created, and you can assign
 permissions to that group.
 

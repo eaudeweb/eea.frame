@@ -27,7 +27,9 @@ class UserMiddleware(object):
         request = get_current_request()
         if getattr(settings, 'FRAME_URL', None):
             forwarded_cookies = get_forwarded_cookies(request)
-            resp = requests.get(settings.FRAME_URL, cookies=forwarded_cookies)
+            verify = getattr(settings, 'FRAME_VERIFY_SSL', None)
+            resp = requests.get(settings.FRAME_URL, cookies=forwarded_cookies,
+                                verify=verify)
             resp_json = resp.json()
             if (resp.status_code == 200 and resp_json):
                 request.user_id = resp_json['user_id']
@@ -60,6 +62,7 @@ class UserMiddleware(object):
 class SeenMiddleware(object):
     def process_request(self, request):
         from frame.models import Seen
+
         seen_exclude = getattr(settings, 'FRAME_SEEN_EXCLUDE', [])
         if request.path_info in seen_exclude:
             return
