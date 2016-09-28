@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.template import TemplateDoesNotExist
-from django.template.loader import BaseLoader
+from django.template.loaders.base import Loader as BaseLoader
 from frame.middleware import get_current_request
 from frame.utils import get_forwarded_cookies
 import requests
@@ -37,7 +37,7 @@ class Loader(BaseLoader):
         request = get_current_request()
 
         if (request and getattr(settings, 'FRAME_URL', None)
-            and template_name == 'frame.html'):
+                and template_name == 'frame.html'):
 
             forwarded_cookies = get_forwarded_cookies(request)
 

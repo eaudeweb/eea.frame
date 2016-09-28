@@ -2,7 +2,7 @@ import json
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 import re
 
 DIV_PATTERN = '<div id="language">.*?</div>'
@@ -52,7 +52,7 @@ def get_objects_from_last_seen_count(request):
 
     count = 0
     for model_name, field in models:
-        model = import_by_path(model_name)
+        model = import_string(model_name)
         if seen:
             count += model.objects.filter(**{'%s__gte' % field: seen}).count()
         else:
