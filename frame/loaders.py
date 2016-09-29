@@ -1,6 +1,9 @@
 from django.conf import settings
 from django.template import TemplateDoesNotExist
-from django.template.loaders.base import Loader as BaseLoader
+try:
+    from django.template.loaders.base import Loader as BaseLoader
+except ImportError:
+    from django.template.loader import BaseLoader
 from frame.middleware import get_current_request
 from frame.utils import get_forwarded_cookies
 import requests
