@@ -2,10 +2,7 @@ import json
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-try:
-    from django.utils.module_loading import import_string
-except ImportError:
-    from django.utils.module_loading import import_by_path as import_string
+from django.utils.module_loading import import_string
 import re
 
 DIV_PATTERN = '<div id="language">.*?</div>'

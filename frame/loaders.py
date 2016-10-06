@@ -1,9 +1,6 @@
 from django.conf import settings
 from django.template import TemplateDoesNotExist
-try:
-    from django.template.loaders.base import Loader as BaseLoader
-except ImportError:
-    from django.template.loader import BaseLoader
+from django.template.loaders.base import Loader as BaseLoader
 from frame.middleware import get_current_request
 from frame.utils import get_forwarded_cookies
 import requests
@@ -50,6 +47,6 @@ class Loader(BaseLoader):
                 frame_response = self._process_resp(resp_json['frame_html'])
                 return frame_response, template_name
 
-        raise TemplateDoesNotExist
+        raise TemplateDoesNotExist(template_name)
 
     load_template_source.is_usable = True
