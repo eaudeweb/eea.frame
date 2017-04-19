@@ -4,7 +4,10 @@ import logging
 
 from frame.utils import get_current_language, get_forwarded_cookies
 from django.conf import settings
-
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    MiddlewareMixin = object
 
 _thread_locals = local()
 
@@ -15,7 +18,7 @@ def get_current_request():
     return getattr(_thread_locals, 'request', None)
 
 
-class RequestMiddleware(object):
+class RequestMiddleware(MiddlewareMixin):
     """
     Middleware that gets various objects from the
     request object and saves them in thread local storage.
@@ -25,7 +28,7 @@ class RequestMiddleware(object):
         _thread_locals.request = request
 
 
-class UserMiddleware(object):
+class UserMiddleware(MiddlewareMixin):
     def _fetch_data(self):
         request = get_current_request()
         forwarded_cookies = get_forwarded_cookies(request)
@@ -72,7 +75,7 @@ class UserMiddleware(object):
             request.user_groups = []
 
 
-class SeenMiddleware(object):
+class SeenMiddleware(MiddlewareMixin):
     def process_request(self, request):
         from frame.models import Seen
 
