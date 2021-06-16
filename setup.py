@@ -15,8 +15,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'Django>=1.9',
-        'requests>=2.2',
+        'Django>=2.2',
+        'requests>=2.25.1',
     ],
     description='Django integration middleware for EEA Zope websites',
     long_description=README,

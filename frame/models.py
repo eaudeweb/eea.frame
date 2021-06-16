@@ -4,7 +4,7 @@ from django.contrib import admin
 
 
 class Seen(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     seen = models.DateTimeField(auto_now=True)
 
 
