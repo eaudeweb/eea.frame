@@ -4,7 +4,10 @@ import logging
 
 from frame.utils import get_current_language, get_forwarded_cookies
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 _thread_locals = local()
 
@@ -60,11 +63,18 @@ class UserMiddleware:
                     getattr(settings, 'DEFAULT_LANGUAGE', None)
                 )
                 if request.user_id:
+                    try:
+                        request.user = User.objects.get(
+                            username=request.user_id)
+                    except User.DoesNotExist:
+                        request.user = AnonymousUser()
                     request.META['REMOTE_USER'] = {
                         'user_id': request.user_id,
                         'user_roles': request.user_roles,
                         'user_groups': request.user_groups,
                     }
+                else:
+                    request.user = AnonymousUser()
         else:
             request.user_id = getattr(settings, 'USER_ID', None)
             request.user_roles = getattr(settings, 'USER_ROLES', None)
