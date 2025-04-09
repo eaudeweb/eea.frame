@@ -86,3 +86,19 @@ location such as ``^/_lastseen/$``, then set the ``FRAME_SEEN_MODELS`` to a
 list of pairs (model, field) for the objects to be counted.
 
 You should exclude this view using ``FRAME_SEEN_EXCLUDE`` config setting.
+
+
+Publishing a new version
+------------------------
+
+You need to obtain maintainers rights on https://pypi.org/project/eea.frame/. Those rights can only be set by an owner on Pypi.
+
+After bumping to a new version, follow the steps below::
+
+  cd eea.frame
+  # You can use a virtualenv to isolate the packages needed
+  python -m pip install --user --upgrade setuptools wheel
+  python -m pip install --user --upgrade twine
+  python setup.py sdist bdist_wheel
+  python -m twine upload dist/* # You will need to provide your PYPI API token
+
